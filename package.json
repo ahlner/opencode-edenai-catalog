@@ -1,0 +1,14 @@
+{
+  "name": "@ahlner/opencode-edenai-catalog",
+  "version": "1.0.0",
+  "description": "OpenCode V2 plugin: extends the Eden AI (EU) provider with the live model catalog - models, capabilities, context limits and pricing.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@opencode/plugin": "^2.0.22",
+    "@opencode/schema": "^2.0.22"
+  }
+}
