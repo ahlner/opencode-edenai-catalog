@@ -74,6 +74,10 @@ Plugins.
   in OpenCode konfigurierte statische Eden-AI-Konfiguration unangetastet —
   es gibt nur eine Warnung im Log, kein harter Fehler.
 
+## Lizenz
+
+MIT — siehe [LICENSE](./LICENSE).
+
 ## Entwicklung
 
 Struktur:
