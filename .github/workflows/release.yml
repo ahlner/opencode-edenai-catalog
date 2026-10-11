@@ -16,7 +16,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 22.14.0
           registry-url: https://registry.npmjs.org
 
       - name: Verify tag matches package.json version
@@ -30,7 +30,7 @@ jobs:
       - name: Syntax check
         run: node --experimental-strip-types --check src/index.ts
 
-      - name: Publish to npm
-        run: npm publish --access public
+      - name: Stage package on npm (requires manual 2FA approval on npmjs.com)
+        run: npm stage publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
