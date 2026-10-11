@@ -7,10 +7,16 @@ Preise. Ersetzt die statische Modellkonfiguration durch echte Daten aus
 
 ## Installation
 
-Aus diesem Repo (getaggte Version, empfohlen):
+Aus npm (empfohlen):
 
 ```sh
-opencode plugin add 'git+ssh://git@gitlab.com/ahlner/software/opencode-edenai-catalog.git#v1.0.0'
+opencode plugin add @ahlner/opencode-edenai-catalog
+```
+
+oder direkt aus diesem Repo (getaggte Version):
+
+```sh
+opencode plugin add 'github:ahlner/opencode-edenai-catalog#v1.0.0'
 ```
 
 oder deklarativ in der globalen `~/.config/opencode/opencode.json`:
@@ -18,19 +24,17 @@ oder deklarativ in der globalen `~/.config/opencode/opencode.json`:
 ```jsonc
 {
   "plugins": [
-    "git+ssh://git@gitlab.com/ahlner/software/opencode-edenai-catalog.git#v1.0.0"
+    "@ahlner/opencode-edenai-catalog"
   ]
 }
 ```
 
 OpenCode installiert das Package samt Abhängigkeiten automatisch nach
-`~/.cache/opencode/packages/`. Es werden exakte Tags und Commit-Hashes
-gepinnt; ein Versions-Update erfordert ein neues Tag + erneutes `plugin add`
-bzw. Config-Update.
+`~/.cache/opencode/packages/`. Bei Git-Installationen werden exakte Tags und
+Commit-Hashes gepinnt; ein Versions-Update erfordert ein neues Tag + erneutes
+`plugin add` bzw. Config-Update.
 
-Voraussetzung: OpenCode V2 (getestet gegen 2.0.x), SSH-Zugang zu `gitlab.com`
-mit einem Key, der dieses private Repo lesen darf (Repo-Membership) sowie
-Git-Zugangsdaten, die OpenCode zum Klonen nutzt.
+Voraussetzung: OpenCode V2 (getestet gegen 2.0.x).
 
 ## Konfiguration
 
@@ -40,7 +44,7 @@ Optionen über die Objekt-Form:
 {
   "plugins": [
     {
-      "package": "git+ssh://git@gitlab.com/ahlner/software/opencode-edenai-catalog.git#v1.0.0",
+      "package": "github:ahlner/opencode-edenai-catalog#v1.0.0",
       "options": {
         "catalogURL": "https://api.eu.edenai.run/v3/models",
         "baseURL": "https://api.eu.edenai.run/v3",

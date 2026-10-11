@@ -6,7 +6,7 @@
   "author": "Philipp Ahlner",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/ahlner/software/opencode-edenai-catalog.git"
+    "url": "git+https://github.com/ahlner/opencode-edenai-catalog.git"
   },
   "keywords": [
     "opencode",
