@@ -34,6 +34,6 @@ jobs:
         run: node --experimental-strip-types --check src/index.ts
 
       - name: Stage package on npm (requires manual 2FA approval on npmjs.com)
-        run: npm stage publish
+        run: npm stage publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
