@@ -16,7 +16,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.14.0
+          node-version: 24
           registry-url: https://registry.npmjs.org
 
       - name: Setup latest npm (>= 11.15 for stage publish)
