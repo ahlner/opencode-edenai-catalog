@@ -1,25 +1,36 @@
 # @ahlner/opencode-edenai-catalog
 
-OpenCode V2 Plugin: erweitert den Provider `edenai` (Eden AI, EU-Region) um den
-live abgerufenen Modellkatalog — Modelle, Capabilities, Context-Limits und
-Preise. Ersetzt die statische Modellkonfiguration durch echte Daten aus
-`/v3/models`.
+This OpenCode V2 plugin adds the current model catalog to the `edenai` provider for the Eden AI EU region.
+The catalog contains models, capabilities, context limits, and prices.
+The plugin replaces the static model configuration with data from `/v3/models`.
 
 ## Installation
 
-Aus npm (empfohlen):
+Use OpenCode V2.
+The plugin was tested with OpenCode 2.0.x.
+
+Choose one installation method.
+
+### Install from npm (recommended)
+
+Run this command:
 
 ```sh
 opencode plugin add @ahlner/opencode-edenai-catalog
 ```
 
-oder direkt aus diesem Repo (getaggte Version):
+### Install from this repository
+
+Use a version tag.
+Run this command:
 
 ```sh
 opencode plugin add 'github:ahlner/opencode-edenai-catalog#v1.0.0'
 ```
 
-oder deklarativ in der globalen `~/.config/opencode/opencode.json`:
+### Install through the configuration file
+
+Add this entry to the global configuration file at `~/.config/opencode/opencode.json`:
 
 ```jsonc
 {
@@ -29,16 +40,17 @@ oder deklarativ in der globalen `~/.config/opencode/opencode.json`:
 }
 ```
 
-OpenCode installiert das Package samt Abhängigkeiten automatisch nach
-`~/.cache/opencode/packages/`. Bei Git-Installationen werden exakte Tags und
-Commit-Hashes gepinnt; ein Versions-Update erfordert ein neues Tag + erneutes
-`plugin add` bzw. Config-Update.
+OpenCode automatically installs the package and its dependencies in `~/.cache/opencode/packages/`.
+For Git installations, OpenCode keeps the exact tag or commit hash.
 
-Voraussetzung: OpenCode V2 (getestet gegen 2.0.x).
+To update a Git installation:
 
-## Konfiguration
+1. Select a new version tag.
+2. Run `opencode plugin add` with that tag, or change the tag in the configuration file.
 
-Optionen über die Objekt-Form:
+## Configuration
+
+Use the object form to specify options:
 
 ```jsonc
 {
@@ -55,48 +67,78 @@ Optionen über die Objekt-Form:
 }
 ```
 
-| Option | Default | Beschreibung |
+| Option | Default | Description |
 | --- | --- | --- |
-| `catalogURL` | `https://api.eu.edenai.run/v3/models` | Endpunkt des Modellkatalogs |
-| `baseURL` | `https://api.eu.edenai.run/v3` | API-Basis-URL des Providers (Vorrang vor bereits konfigurierter `baseURL`) |
-| `includeNonToolModels` | `false` | Auch Modelle ohne Function-Calling aufnehmen |
+| `catalogURL` | `https://api.eu.edenai.run/v3/models` | The URL of the model catalog. |
+| `baseURL` | `https://api.eu.edenai.run/v3` | The base URL for the provider API. This option overrides an existing `baseURL` configuration. |
+| `includeNonToolModels` | `false` | Include models without function calling. |
 
-Der API-Key selbst wird wie üblich über `provider.edenai.options.apiKey`
-bzw. die Auth-Verwaltung von OpenCode konfiguriert — nicht Teil dieses
-Plugins.
+Configure the API key through `provider.edenai.options.apiKey` or the authentication settings in OpenCode.
+This plugin does not configure the API key.
 
-## Verhalten
+## Behavior
 
-- Lädt beim Plugin-Start den Katalog (15 s Timeout) und registriert/aktualisiert
-  den `edenai`-Provider via `ctx.provider.transform` mit dem
-  `openai-compatible`-Treiberpaket.
-- Filtert standardmäßig auf textuelle Modelle mit Function-Calling-Support.
-- Preise werden aus `pricing`/`list_pricing` in USD pro Million Tokens
-  übernommen; Modelle mit `*_above_200k_tokens`-Preisen erhalten einen
-  zweiten Cost-Tier.
-- Schlägt der Katalog-Abruf fehl (Netzwerk, HTTP-Fehler, Timeout), bleibt die
-  in OpenCode konfigurierte statische Eden-AI-Konfiguration unangetastet —
-  es gibt nur eine Warnung im Log, kein harter Fehler.
+- The plugin retrieves the catalog when the plugin starts. The request has a timeout of 15 seconds.
+- The plugin registers or updates the `edenai` provider through `ctx.provider.transform`. It uses the `openai-compatible` driver package.
+- By default, the plugin includes only text models that support function calling.
+- The plugin reads prices from `pricing` or `list_pricing`. It expresses prices in USD per million tokens.
+- Models with `*_above_200k_tokens` prices receive a second cost tier.
+- If the catalog request fails, the plugin keeps the static Eden AI configuration in OpenCode unchanged.
+  Failures include network errors, HTTP errors, and timeouts.
+  The plugin writes a warning to the log instead of a fatal error.
 
-## Lizenz
+## License
 
-MIT — siehe [LICENSE](./LICENSE).
+The project uses the MIT license.
+Read [LICENSE](./LICENSE) for the legal terms.
 
-## Entwicklung
+## Development
 
-Struktur:
+### Project structure
 
 ```
 opencode-edenai-catalog/
-├── package.json      # Manifest, exports TS-Source direkt (kein Build-Schritt)
-├── src/index.ts      # Plugin-Logik
-└── README.md
+├── AGENTS.md         # Rules for project documentation
+├── package.json      # Package manifest with direct TypeScript exports
+├── src/index.ts      # Plugin code
+└── README.md         # Project documentation
 ```
 
-Lokales Testen: Repo-Pfad direkt in `opencode.json(c)` eintragen:
+The package exports the TypeScript source directly.
+It does not require a build step.
+
+### Local test
+
+Add the repository path to `opencode.json` or `opencode.jsonc`:
 
 ```jsonc
 { "plugins": ["./relative/path/to/opencode-edenai-catalog"] }
 ```
 
-Nach Änderungen an unwatched dependencies ggf. `opencode service restart`.
+If OpenCode does not monitor a dependency, you may need to restart the service after changes to that dependency.
+If necessary, run this command:
+
+```sh
+opencode service restart
+```
+
+## Technical terms
+
+| Term | Meaning |
+| --- | --- |
+| API | An interface that software uses to exchange requests and responses. |
+| Capability | A function or input or output type that a model supports. |
+| Context limit | The maximum number of tokens in a model context. |
+| Cost tier | A set of prices for a specified context size. |
+| Function calling | A model capability that lets the model request a tool operation. |
+| Model catalog | A list of models and their properties. |
+| Provider | The OpenCode component that gives access to models from an API service. |
+| Token | A unit that a model uses to process input or output. |
+
+## Documentation rules
+
+Write and maintain project documentation in Simplified Technical English.
+Follow the rules in [AGENTS.md](./AGENTS.md).
+These rules apply the writing principles of ASD-STE100.
+They do not certify compliance with the official ASD dictionary.
+Keep the MIT license text unchanged.
