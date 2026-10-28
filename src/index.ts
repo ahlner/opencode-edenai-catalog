@@ -2,7 +2,7 @@ import { Model, Plugin, Provider } from "@opencode/plugin"
 import { Money } from "@opencode/schema/money"
 
 const PROVIDER_ID = "edenai"
-const DEFAULT_CATALOG_URL = "https://api.eu.edenai.run/v3/models"
+const DEFAULT_CATALOG_URL = "https://api.eu.edenai.run/v3/models?view=models"
 const DEFAULT_API_URL = "https://api.eu.edenai.run/v3"
 const PROVIDER_PACKAGE = "@opencode/ai/providers/openai-compatible"
 const FETCH_TIMEOUT_MS = 15_000
