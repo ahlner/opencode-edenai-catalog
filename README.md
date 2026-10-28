@@ -5,6 +5,7 @@ The catalog contains models, capabilities, context limits, and prices.
 The plugin replaces the static model configuration with data from `/v3/models?view=models`.
 OpenCode lists `glm-5.3-flash` as `edenai/glm-5.3-flash`.
 The plugin sends `glm-5.3-flash` to the Eden AI API.
+This behavior requires repository commit `42f4f7b94dc8408b65e63f6e682b02494b4d7f1f` or a later release.
 
 ## Installation
 
@@ -21,13 +22,15 @@ Run this command:
 opencode plugin add @ahlner/opencode-edenai-catalog
 ```
 
+Check the npm release before you use the routing behavior described above.
+
 ### Install from this repository
 
-Use a version tag.
+Use a revision that contains this change.
 Run this command:
 
 ```sh
-opencode plugin add 'github:ahlner/opencode-edenai-catalog#v1.0.0'
+opencode plugin add 'github:ahlner/opencode-edenai-catalog#42f4f7b94dc8408b65e63f6e682b02494b4d7f1f'
 ```
 
 ### Install through the configuration file
@@ -58,7 +61,7 @@ Use the object form to specify options:
 {
   "plugins": [
     {
-      "package": "github:ahlner/opencode-edenai-catalog#v1.0.0",
+      "package": "github:ahlner/opencode-edenai-catalog#42f4f7b94dc8408b65e63f6e682b02494b4d7f1f",
       "options": {
         "catalogURL": "https://api.eu.edenai.run/v3/models?view=models",
         "baseURL": "https://api.eu.edenai.run/v3",

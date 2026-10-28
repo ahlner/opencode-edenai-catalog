@@ -2,6 +2,8 @@ import assert from 'node:assert/strict'
 import { afterEach, test } from 'node:test'
 import plugin from './index.ts'
 import { Model, Provider } from '@opencode/plugin'
+import { AI } from '@opencode/ai'
+import { OpenAICompatible } from '@opencode/ai/providers/openai-compatible'
 
 const originalFetch = globalThis.fetch
 afterEach(() => { globalThis.fetch = originalFetch })
@@ -43,6 +45,27 @@ test('uses the provider-independent catalog URL and sends its model ID', async (
   assert.equal(state.provider.settings.baseURL, 'https://api.eu.edenai.run/v3')
   assert.equal(state.models.get('glm-5.3-flash').modelID, 'glm-5.3-flash')
   assert.equal(state.models.get('glm-5.3-flash').providerID, 'edenai')
+
+  const requests = []
+  globalThis.fetch = async (url, init) => {
+    requests.push({ url: String(url), body: JSON.parse(Buffer.from(init.body).toString()) })
+    return new Response('request captured', { status: 500 })
+  }
+  const ai = AI.make()
+  try {
+    await assert.rejects(ai.llm.generate({
+      model: OpenAICompatible.model(state.models.get('glm-5.3-flash').modelID, {
+        baseURL: state.provider.settings.baseURL,
+        apiKey: 'test-key',
+      }),
+      prompt: 'OK',
+    }))
+  } finally {
+    await ai.dispose()
+  }
+  assert.equal(requests.length, 1)
+  assert.equal(requests[0].url, 'https://api.eu.edenai.run/v3/chat/completions')
+  assert.equal(requests[0].body.model, 'glm-5.3-flash')
 })
 
 test('honors an explicit catalog URL and existing API URL', async () => {
@@ -53,15 +76,14 @@ test('honors an explicit catalog URL and existing API URL', async () => {
 })
 
 test('preserves the configured provider when the catalog request fails', async () => {
-  const previous = model('previous')
-  const existing = { provider: { name: 'Existing', settings: { baseURL: 'https://example.test/v3' } }, models: new Map([['previous', previous]]) }
   globalThis.fetch = async () => ({ ok: false, status: 503 })
   const warning = console.warn
   console.warn = () => {}
+  let transformCalls = 0
   try {
-    await plugin.setup({ options: {}, provider: { transform: async () => { throw Error('unexpected transform') } } })
+    await plugin.setup({ options: {}, provider: { transform: async () => { transformCalls++ } } })
   } finally { console.warn = warning }
-  assert.equal(existing.models.get('previous'), previous)
+  assert.equal(transformCalls, 0)
 })
 
 test('filters non-text and non-tool models unless configured otherwise', async () => {
