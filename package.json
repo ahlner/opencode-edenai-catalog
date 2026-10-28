@@ -1,6 +1,6 @@
 {
   "name": "@ahlner/opencode-edenai-catalog",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "This OpenCode V2 plugin adds the current model catalog to the Eden AI EU provider. The catalog contains models, capabilities, context limits, and prices.",
   "license": "MIT",
   "author": "Philipp Ahlner",
