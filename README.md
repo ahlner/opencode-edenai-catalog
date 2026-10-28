@@ -2,7 +2,9 @@
 
 This OpenCode V2 plugin adds the current model catalog to the `edenai` provider for the Eden AI EU region.
 The catalog contains models, capabilities, context limits, and prices.
-The plugin replaces the static model configuration with data from `/v3/models`.
+The plugin replaces the static model configuration with data from `/v3/models?view=models`.
+OpenCode lists `glm-5.3-flash` as `edenai/glm-5.3-flash`.
+The plugin sends `glm-5.3-flash` to the Eden AI API.
 
 ## Installation
 
@@ -58,7 +60,7 @@ Use the object form to specify options:
     {
       "package": "github:ahlner/opencode-edenai-catalog#v1.0.0",
       "options": {
-        "catalogURL": "https://api.eu.edenai.run/v3/models",
+        "catalogURL": "https://api.eu.edenai.run/v3/models?view=models",
         "baseURL": "https://api.eu.edenai.run/v3",
         "includeNonToolModels": false
       }
@@ -69,7 +71,7 @@ Use the object form to specify options:
 
 | Option | Default | Description |
 | --- | --- | --- |
-| `catalogURL` | `https://api.eu.edenai.run/v3/models` | The URL of the model catalog. |
+| `catalogURL` | `https://api.eu.edenai.run/v3/models?view=models` | The URL of the model catalog. |
 | `baseURL` | `https://api.eu.edenai.run/v3` | The base URL for the provider API. This option overrides an existing `baseURL` configuration. |
 | `includeNonToolModels` | `false` | Include models without function calling. |
 
@@ -82,6 +84,7 @@ This plugin does not configure the API key.
 - The plugin registers or updates the `edenai` provider through `ctx.provider.transform`. It uses the `openai-compatible` driver package.
 - By default, the plugin includes only text models that support function calling.
 - The plugin reads prices from `pricing` or `list_pricing`. It expresses prices in USD per million tokens.
+- Catalog prices are estimates. Eden AI can select an endpoint with a different price for a routed model.
 - Models with `*_above_200k_tokens` prices receive a second cost tier.
 - If the catalog request fails, the plugin keeps the static Eden AI configuration in OpenCode unchanged.
   Failures include network errors, HTTP errors, and timeouts.
@@ -101,11 +104,17 @@ opencode-edenai-catalog/
 ├── AGENTS.md         # Rules for project documentation
 ├── package.json      # Package manifest with direct TypeScript exports
 ├── src/index.ts      # Plugin code
+├── src/index.test.mjs # Focused plugin tests
 └── README.md         # Project documentation
 ```
 
 The package exports the TypeScript source directly.
 It does not require a build step.
+Run the focused tests with Node.js 24:
+
+```sh
+node --test src/index.test.mjs
+```
 
 ### Local test
 
@@ -132,6 +141,8 @@ opencode service restart
 | Cost tier | A set of prices for a specified context size. |
 | Function calling | A model capability that lets the model request a tool operation. |
 | Model catalog | A list of models and their properties. |
+| Routed model | A model name that lets Eden AI select a provider endpoint for each request. |
+| Endpoint | One provider's deployment of a model. |
 | Provider | The OpenCode component that gives access to models from an API service. |
 | Token | A unit that a model uses to process input or output. |
 
